@@ -3,6 +3,9 @@ from .tool.func import *
 def list_give_2(conn):
     curs = conn.cursor()
 
+    if tool_acl_check('give_log') == 1:
+        return re_error('/ban')
+
     list_data = '<ul>'
     back = ''
 

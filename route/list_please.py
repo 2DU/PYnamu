@@ -3,6 +3,9 @@ from .tool.func import *
 def list_please_2(conn):
     curs = conn.cursor()
 
+    if tool_acl_check('please') == 1:
+        return re_error('/ban')
+    
     num = int(number_check(flask.request.args.get('num', '1')))
     if num * 50 > 0:
         sql_num = num * 50 - 50

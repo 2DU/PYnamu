@@ -3,6 +3,9 @@ from .tool.func import *
 def list_not_close_topic_2(conn):
     curs = conn.cursor()
 
+    if tool_acl_check('not_close_topic') == 1:
+        return re_error('/ban')
+    
     div = '<ul>'
 
     curs.execute(db_change('select title, sub, date, code from rd where stop != "O" order by date desc'))

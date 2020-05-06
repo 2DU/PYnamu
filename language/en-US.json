@@ -387,5 +387,6 @@
             "application_not_found" : "Application not found",
             "invalid_password_error" : "The Password or ID is invalid.",
             "watchlist_overflow_error": "You cannot add more than ten documents.",
-            "copyright_disagreed" : "You have to agree copyright noticement to contribute"
+            "copyright_disagreed" : "You have to agree copyright noticement to contribute",
+            "tool_acl_setting": "Tool acl settings"
 }

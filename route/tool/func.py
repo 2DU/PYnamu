@@ -838,6 +838,59 @@ def slow_edit_check():
 
     return 0
 
+def tool_acl_check(tool = None):
+    ip = ip_check()
+    acl_data = None
+
+    curs.execute(db_change("select acl from tool_acl where tool = 'all'"))
+    acl_data = curs.fetchall()
+
+    if tool != None:
+        curs.execute(db_change("select acl from tool_acl where tool = ?"), [tool])
+        tool_acl_data = curs.fetchall()
+        if tool_acl_data and tool_acl_data[0][0]:
+            acl_data = tool_acl_data
+
+    if acl_data and acl_data[0][0] != 'normal':
+        if acl_data[0][0] == 'user':
+            if ip_or_user(ip) == 1:
+                return 1
+
+        if acl_data[0][0] == 'admin':
+            if ip_or_user(ip) == 1:
+                return 1
+
+            if admin_check(1) != 1:
+                return 1
+
+        if acl_data[0][0] == '50_edit':
+            if ip_or_user(ip) == 1:
+                return 1
+
+            curs.execute(db_change("select count(title) from history where ip = ?"), [ip])
+            count = curs.fetchall()
+            if count:
+                count = count[0][0]
+            else:
+                count = 0
+
+            if count < 50:
+                return 1
+
+        if acl_data[0][0] == 'email':
+            if ip_or_user(ip) == 1:
+                return 1
+
+            curs.execute(db_change("select data from user_set where id = ? and name = 'email'"), [ip])
+            email = curs.fetchall()
+            if not email:
+                return 1
+
+        if acl_data[0][0] == 'owner':
+            if admin_check() != 1:
+                return 1
+    return 0
+
 def acl_check(name = 'test', tool = '', topic_num = '1'):
     ip = ip_check()
     get_ban = ban_check()

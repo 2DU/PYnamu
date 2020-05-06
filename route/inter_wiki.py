@@ -4,7 +4,10 @@ def inter_wiki_2(conn, tools):
     curs = conn.cursor()
 
     div = ''
-    admin = admin_check()
+    admin = admin_check()    
+    
+    if tool_acl_check('inter_wiki') == 1:
+        return re_error('/ban')
 
     if tools == 'inter_wiki':
         del_link = 'del_inter_wiki'

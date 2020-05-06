@@ -3,6 +3,9 @@ from .tool.func import *
 def recent_discuss_2(conn):
     curs = conn.cursor()
 
+    if tool_acl_check('recent_discuss') == 1:
+        return re_error('/ban')
+    
     div = ''
 
     if flask.request.args.get('what', 'normal') == 'normal':

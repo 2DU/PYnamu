@@ -362,6 +362,7 @@
     "many_upload_acl" : "다중 파일 업로드 ACL",
     "reset_backlink" : "역링크 초기화",
     "link_in_this" : "이 문서의 링크",
+    "tool_acl_setting": "도구 ACL 설정",
     "star_doc" : "관심 문서",
     "add_star_doc" : "관심 문서 추가"
 }

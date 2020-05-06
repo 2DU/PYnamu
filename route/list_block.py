@@ -3,6 +3,9 @@ from .tool.func import *
 def list_block_2(conn, name, tool):
     curs = conn.cursor()
 
+    if tool_acl_check('block_log') == 1:
+        return re_error('/ban')
+    
     num = int(number_check(flask.request.args.get('num', '1')))
     if num * 50 > 0:
         sql_num = num * 50 - 50

@@ -3,6 +3,9 @@ from .tool.func import *
 def list_admin_2(conn):
     curs = conn.cursor()
 
+    if tool_acl_check('admin_list') == 1:
+        return re_error('/ban')
+    
     div = '<ul>'
 
     curs.execute(db_change("select id, acl, date from user where not acl = 'user' order by date desc"))

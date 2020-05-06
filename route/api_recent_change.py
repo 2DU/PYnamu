@@ -3,6 +3,9 @@ from .tool.func import *
 def api_recent_change_2(conn):
     curs = conn.cursor()
 
+    if tool_acl_check('recent_changes') == 1:
+        return flask.jsonify({})
+    
     num = int(number_check(flask.request.args.get('num', '10')))
     if not num > 0:
         num = 1

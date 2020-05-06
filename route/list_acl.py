@@ -5,6 +5,9 @@ def list_acl_2(conn):
 
     div = '<ul>'
 
+    if tool_acl_check('list_acl') == 1:
+        return re_error('/ban')
+    
     curs.execute(db_change("select title, why from acl where decu != '' or dis != '' or view != '' order by title desc"))
     list_data = curs.fetchall()
     for data in list_data:

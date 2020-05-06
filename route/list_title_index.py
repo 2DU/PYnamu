@@ -3,6 +3,9 @@ from .tool.func import *
 def list_title_index_2(conn):
     curs = conn.cursor()
 
+    if tool_acl_check('title_index') == 1:
+        return re_error('/ban')
+    
     page = int(number_check(flask.request.args.get('page', '1')))
     num = int(number_check(flask.request.args.get('num', '100')))
     if page * num > 0:

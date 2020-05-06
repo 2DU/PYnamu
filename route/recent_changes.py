@@ -3,6 +3,9 @@ from .tool.func import *
 def recent_changes_2(conn, name, tool):
     curs = conn.cursor()
 
+    if tool_acl_check('recent_changes') == 1:
+        return re_error('/ban')
+    
     if flask.request.method == 'POST':
         return redirect(
             '/diff/' + url_pas(name) +
