@@ -147,7 +147,8 @@ create_data['all_data'] = [
     'inter',
     'html_filter',
     'oauth_conn',
-    'user_application'
+    'user_application',
+    'token'
 ]
 for i in create_data['all_data']:
     try:
@@ -193,6 +194,7 @@ if setup_tool != 0:
     create_data['inter'] = ['title', 'link', 'icon']
     create_data['html_filter'] = ['html', 'kind', 'plus']
     create_data['oauth_conn'] = ['provider', 'wiki_id', 'sns_id', 'name', 'picture']
+    create_data['token'] = ['username', 'key']
 
     for create_table in create_data['all_data']:
         for create in create_data[create_table]:

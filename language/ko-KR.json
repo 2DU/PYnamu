@@ -1,4 +1,5 @@
 {
+    "autologin": "자동 로그인",
     "delete_admin_group": "관리자 그룹 삭제",
     "document_name": "문서명",
     "non_login_alert": "비로그인 알림",

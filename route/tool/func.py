@@ -494,6 +494,51 @@ def skin_check(set_n = 0):
         if os.path.exists(os.path.abspath('./views/' + skin_exist[0][0] + '/index.html')) == 1:
             skin = skin_exist[0][0]
 
+    # 도우너=사용자이름 둘리=비밀번호해시
+
+    if not('state' in flask.session):
+        if 'autologin_username' in flask.request.cookies and 'autologin_token' in flask.request.cookies:
+            pwhash = flask.request.cookies.get('autologin_token')
+            username = flask.request.cookies.get('autologin_username')
+
+            curs.execute(db_change("select key from token where username = ?"), [username])
+            try:
+                usrtkn = curs.fetchall()[0][0]
+
+                curs.execute(db_change("select pw from user where id = ?"), [username])
+                shusrpw = curs.fetchall()[0][0]
+
+                if pwhash == sha224(shusrpw + sha224(usrtkn)):
+                    curs.execute(db_change("select id from user where id = ?"), [username])
+                    flask.session['state'] = 1
+                    flask.session['id'] = curs.fetchall()[0][0]
+            except:
+                pass
+    else:
+        # 비밀번호 변경 등으로 쿠키가 무효가 됐는지 확인하고 무효이면 로그아웃시키기
+        if 'autologin_username' in flask.request.cookies and 'autologin_token' in flask.request.cookies:
+            pwhash = flask.request.cookies.get('autologin_token')
+            username = flask.request.cookies.get('autologin_username')
+
+            curs.execute(db_change("select key from token where username = ?"), [username])
+            try:
+                usrtkn = curs.fetchall()[0][0]
+
+                curs.execute(db_change("select pw from user where id = ?"), [username])
+                shusrpw = curs.fetchall()[0][0]
+
+                if pwhash == sha224(shusrpw + sha224(usrtkn)):
+                    #쿠키가 올바름
+                    pass
+                else:
+                    curs.execute(db_change("delete from token where username = ?"), [username])
+                    flask.session.pop('state', None)
+                    flask.session.pop('id', None)
+            except:
+                curs.execute(db_change("delete from token where username = ?"), [username])
+                flask.session.pop('state', None)
+                flask.session.pop('id', None)
+
     if set_n == 0:
         return './views/' + skin + '/index.html'
     else:

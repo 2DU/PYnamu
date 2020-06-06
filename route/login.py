@@ -44,9 +44,29 @@ def login_2(conn):
 
         curs.execute(db_change("insert into ua_d (name, ip, ua, today, sub) values (?, ?, ?, ?, '')"), [flask.request.form.get('id', None), ip_check(1), agent, get_time()])
 
+        res = flask.make_response(flask.redirect('/user'))
+        
+        #먼저 기존 쿠키를 터뜨리고 생성
+        res.set_cookie('autologin_username', '', expires=0)
+        res.set_cookie('autologin_token', '', expires=0)
+        
+        if flask.request.form.get('autologin', 0) != 0:
+            expdt = datetime.datetime.now()
+            expdt = expdt + datetime.timedelta(days=180)
+
+            rndtkn = ''.join(random.choice("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") for i in range(64))
+
+            #create table token ( username text default '', key text default '' )
+            #일부러 update로 안 함
+            curs.execute(db_change("delete from token where username = ?"), [flask.request.form.get('id', '')])
+            curs.execute(db_change("insert into token (username, key) values (?, ?)"), [flask.request.form.get('id', ''), rndtkn])
+
+            res.set_cookie("autologin_token", value=sha224(pw_encode(flask.request.form.get('pw', '')) + sha224(rndtkn)), expires = expdt, secure = True, httponly = True)
+            res.set_cookie("autologin_username", value=flask.request.form.get('id', ''), expires = expdt, secure = True, httponly = True)
+            
         conn.commit()
 
-        return redirect('/user')
+        return res
     else:
         oauth_check = 0
         oauth_content = '<hr class=\"main_hr\"><div class="oauth-wrapper"><ul class="oauth-list">'
@@ -86,6 +106,8 @@ def login_2(conn):
                         <input placeholder="''' + load_lang('id') + '''" name="id" type="text">
                         <hr class=\"main_hr\">
                         <input placeholder="''' + load_lang('password') + '''" name="pw" type="password">
+                        <hr class=\"main_hr\">
+                        <label><input type=checkbox name=autologin> ''' + load_lang('autologin') + '''</label>
                         <hr class=\"main_hr\">
                         ''' + captcha_get() + '''
                         <button type="submit">''' + load_lang('login') + '''</button>

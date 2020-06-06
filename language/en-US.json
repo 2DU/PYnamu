@@ -1,5 +1,6 @@
 {
     "_comment_1_" : "Common",
+        "autologin": "Remember Me",
         "server" : "Server",
         "filter" : "Filter",
         "delete" : "Delete",
