@@ -213,6 +213,7 @@
         "add_user" : "Add user",
         "2fa" : "2FA",
         "2fa_password" : "2FA password",
+        "2fa_app_otp" : "Authenticator app",
         "2fa_password_change" : "Change 2FA password",
         "_comment_2.1_" : "Filter",
             "_comment_2.1.1_" : "List",

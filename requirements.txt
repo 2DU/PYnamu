@@ -5,4 +5,5 @@ requests
 pymysql
 Pillow
 diff-match-patch
+segno
 pysha3; python_version < "3.6"

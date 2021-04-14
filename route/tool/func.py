@@ -1,6 +1,16 @@
 import os
 import sys
 import platform
+import hmac
+import hashlib
+import os
+import time
+import math
+import base64
+import urllib.parse
+import random
+
+import segno
 
 for i in range(0, 2):
     try:
@@ -1327,3 +1337,34 @@ def re_error(data):
                 data = '<h2>' + load_lang('error') + '</h2><ul class="inside_ul"><li>' + data + '</li></ul>',
                 menu = 0
             )), 400
+
+
+def dev_2fa_totp(key):
+    key = base64.b32decode(key)
+    counter = math.floor(time.time()/30)
+    b = counter.to_bytes(8, "big")
+    #print(list(b))
+    mac = hmac.new(key, digestmod=hashlib.sha1)
+    mac.update(b)
+    hmacResult = mac.digest()
+    offset = int(hmacResult[19] & 0xf)
+    bincode = int(
+		(int(hmacResult[offset]&0x7f))<<24 |
+		(int(hmacResult[offset+1]&0xff))<<16 |
+		(int(hmacResult[offset+2]&0xff))<<8 |
+		(int(hmacResult[offset+3] & 0xff)),
+	)
+    code = str(bincode%1000000)
+    return (6-len(code)) * "0" + code
+
+def dev_2fa_new_key():
+    secret = os.urandom(20)
+    key = base64.b32encode(secret)
+    return key.decode("utf-8")
+
+def dev_2fa_qrcode(provider,accountname,key):
+    urlstr = urllib.parse.urlencode({"secret":key, "issuer":provider, "algorithm": "SHA1", "digits": "6", "period": "30"})
+    #print(urlstr)
+    qrstr = "otpauth://totp/{}:{}?{}".format(urllib.parse.quote(provider), urllib.parse.quote(accountname), urlstr)
+    qr = segno.make_qr(qrstr, error="H")
+    return qr.svg_data_uri(scale=2)
